@@ -12,10 +12,10 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-log()   { echo -e "${GREEN}[INFO]${NC} $1"; }
-warn()  { echo -e "${YELLOW}[WARN]${NC} $1"; }
-error() { echo -e "${RED}[ERROR]${NC} $1"; }
-info()  { echo -e "${BLUE}[NOTE]${NC} $1"; }
+log()   { printf "${GREEN}[INFO]${NC} %s\n" "$1"; }
+warn()  { printf "${YELLOW}[WARN]${NC} %s\n" "$1"; }
+error() { printf "${RED}[ERROR]${NC} %s\n" "$1"; }
+info()  { printf "${BLUE}[NOTE]${NC} %s\n" "$1"; }
 
 # ==================== 安全检查 ====================
 if [[ "$(uname)" != "Darwin" ]]; then
@@ -49,14 +49,14 @@ log "检查并停止 OpenCode 进程..."
 
 # 获取除了当前脚本进程（$$）及其父进程外，所有包含 "opencode" 的进程 ID
 # 避免脚本自身或其调用 shell 因名称匹配而自我终止
-PIDS=$(pgrep -f "opencode" | grep -v -E "^($$|$PPID)$" || true)
+PIDS=$(pgrep -f "opencode" | grep -v "^$$$" | grep -v "^$PPID$" || true)
 
 if [ -n "$PIDS" ]; then
     warn "发现运行中的 OpenCode 进程，正在终止..."
     echo "$PIDS" | xargs kill 2>/dev/null || true
     sleep 2
     # 再次检查并强制终止残留进程
-    PIDS_REMAINING=$(pgrep -f "opencode" | grep -v -E "^($$|$PPID)$" || true)
+    PIDS_REMAINING=$(pgrep -f "opencode" | grep -v "^$$$" | grep -v "^$PPID$" || true)
     if [ -n "$PIDS_REMAINING" ]; then
         echo "$PIDS_REMAINING" | xargs kill -9 2>/dev/null || true
     fi
@@ -224,7 +224,7 @@ log "验证卸载结果..."
 VERIFY_PASS=true
 
 # 排除当前脚本进程（$$）及父进程
-if pgrep -f "opencode" | grep -v -E "^($$|$PPID)$" > /dev/null 2>&1; then
+if pgrep -f "opencode" | grep -v "^$$$" | grep -v "^$PPID$" > /dev/null 2>&1; then
     error "✗ 仍有 OpenCode 进程在运行"
     VERIFY_PASS=false
 else
@@ -232,7 +232,7 @@ else
 fi
 
 if command -v opencode > /dev/null 2>&1; then
-    error "✗ 仍能找到 opencode 命令: $(which opencode)"
+    error "✗ 仍能找到 opencode 命令: $(command -v opencode)"
     VERIFY_PASS=false
 else
     log "✓ opencode 命令已移除"
