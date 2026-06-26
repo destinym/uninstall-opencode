@@ -28,16 +28,16 @@ if %errorLevel% neq 0 (
     echo 部分卸载操作（如删除 Program Files 文件和 HKLM 注册表项）可能因权限不足而失败。
     echo 建议：右键点击此脚本，选择“以管理员身份运行”。
     echo.
-    set /p ADMIN_CONFIRM=是否仍要以当前权限继续运行? (YES/NO): 
-    if /i not "!ADMIN_CONFIRM!"=="YES" (
+    set /p ADMIN_CONFIRM=是否仍要以当前权限继续运行? (y/yes/no): 
+    if /i not "!ADMIN_CONFIRM!"=="YES" if /i not "!ADMIN_CONFIRM!"=="Y" (
         echo [INFO] 操作已取消
         exit /b 1
     )
     echo.
 )
 
-set /p CONFIRM=确认要彻底卸载 OpenCode? 输入 YES 继续: 
-if /i not "%CONFIRM%"=="YES" (
+set /p CONFIRM=确认要彻底卸载 OpenCode? 输入 y/yes 继续: 
+if /i not "!CONFIRM!"=="YES" if /i not "!CONFIRM!"=="Y" (
     echo [INFO] 操作已取消
     exit /b 0
 )

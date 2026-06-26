@@ -38,8 +38,8 @@ echo ""
 echo "${RED}⛔ 此操作不可逆！所有项目数据将被永久删除！${NC}"
 echo ""
 
-read -p "确认要彻底卸载 OpenCode? 输入 YES 继续: " CONFIRM
-if [[ "$CONFIRM" != "YES" ]]; then
+read -p "确认要彻底卸载 OpenCode? 输入 y/yes 继续: " CONFIRM
+if [[ ! "$CONFIRM" =~ ^[Yy]([Ee][Ss])?$ ]]; then
     log "操作已取消"
     exit 0
 fi
